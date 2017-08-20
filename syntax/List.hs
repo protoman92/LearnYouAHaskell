@@ -52,7 +52,7 @@ iterate' :: (a -> a) -> a -> [a]
 iterate' f x = x:(iterate' f . f $ x)
 
 -- splitAt
-splitAt' :: (Integral a) => a -> [b] -> ([b],[b])
+splitAt' :: (Integral a) => a -> [b] -> ([b], [b])
 splitAt' _ [] = ([], [])
 splitAt' index list
     | inx < 0 = ([], list)
@@ -63,3 +63,17 @@ splitAt' index list
           (x:xs) = list
           (xs', xs'') = splitAt' (index - 1) xs
 
+-- dropWhile
+dropWhile' :: (a -> Bool) -> [a] -> [a]
+dropWhile' _ [] = []
+dropWhile' f l@(x:xs)
+    | f x = dropWhile' f xs
+    | otherwise = l
+
+-- span --
+span' :: (a -> Bool) -> [a] -> ([a], [a])
+span' _ [] = ([], [])
+span' f list@(x:xs)
+    | f x = (x:xs', xs'')
+    | otherwise = ([], list)
+    where (xs', xs'') = span' f xs
