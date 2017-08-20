@@ -70,10 +70,50 @@ dropWhile' f l@(x:xs)
     | f x = dropWhile' f xs
     | otherwise = l
 
--- span --
+-- span
 span' :: (a -> Bool) -> [a] -> ([a], [a])
 span' _ [] = ([], [])
 span' f list@(x:xs)
     | f x = (x:xs', xs'')
     | otherwise = ([], list)
     where (xs', xs'') = span' f xs
+
+-- break
+break' :: (a -> Bool) -> [a] -> ([a], [a])
+break' f = span  (not . f)
+
+-- group
+group' :: (Eq a) => [a] -> [[a]]
+--group' [] = []
+--group' [x] = [[x]]
+--group' list =
+--    let nullOrElem x xl = null xl || x `elem` xl
+--        foldFn x l@(xl:xls) = if x `nullOrElem` xl then (x:xl):xls else [x]:l
+--    in foldr foldFn [[]] list
+group' = groupBy' (==)
+
+-- groupBy
+groupBy' :: (a -> a -> Bool) -> [a] -> [[a]]
+groupBy' _ [] = []
+groupBy' f (x:xs) = (x:xs'):(groupBy' f xs'')
+    where (xs', xs'') = span' (f x) xs
+
+-- inits - wrong
+inits' :: [a] -> [[a]]
+inits' [] = []
+inits' list = inits' subList ++ [subList]
+    where subList = init list
+
+-- tails - wrong
+tails' :: [a] -> [[a]]
+tails' [] = []
+tails' list = subList:(tails' subList)
+    where subList = tail list
+
+-- partition
+partition' :: (a -> Bool) -> [a] -> ([a], [a])
+partition' _ [] = ([], [])
+partition' f (x:xs)
+    | f x = (x:xs', xs'')
+    | otherwise = (xs', x:xs'')
+    where (xs', xs'') = partition' f xs
